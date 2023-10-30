@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "bunx eslint --ext .js,.jsx,.ts,.tsx . && bunx prettier --check .",
     "fix": "bunx eslint --fix --ext .js,.jsx,.ts,.tsx . && bunx prettier --write .",
-    "dev": "bun --watch src/server/index.ts",
+    "dev": "bun --watch src/index.ts",
     "start": "bun src/index.ts"
   },
   "type": "module",

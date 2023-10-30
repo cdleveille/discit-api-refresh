@@ -1,0 +1,28 @@
+{
+  "name": "discit-api-refresh",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "scripts": {
+    "lint": "bunx eslint --ext .js,.jsx,.ts,.tsx . && bunx prettier --check .",
+    "fix": "bunx eslint --fix --ext .js,.jsx,.ts,.tsx . && bunx prettier --write .",
+    "dev": "bun --watch src/server/index.ts",
+    "start": "bun src/index.ts"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/jsdom": "^21.1.4",
+    "@types/uuid": "^9.0.6",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
+    "@typescript-eslint/parser": "^6.9.0",
+    "bun-types": "latest",
+    "eslint": "^8.52.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "cron": "^3.1.6",
+    "jsdom": "^22.1.0",
+    "uuid": "^9.0.1"
+  }
+}

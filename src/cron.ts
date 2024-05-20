@@ -8,11 +8,10 @@ export class Cron {
 
 	public refreshDiscsNightly = new CronJob(
 		Cron.EveryNightAtMidnight,
-		async () => {
-			if (Config.REFRESH_DISCS_CRON) {
-				console.log("REFRESH_DISCS_CRON is set to true. Starting disc refresh process...");
-				await refreshDiscs();
-			}
+		() => {
+			if (!Config.REFRESH_DISCS_CRON) return;
+			console.log("REFRESH_DISCS_CRON is set to true. Starting disc refresh process...");
+			refreshDiscs();
 		},
 		null,
 		null,

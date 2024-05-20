@@ -44,9 +44,8 @@ const backupDiscs = async () => {
 const getDiscs = async () => {
 	try {
 		console.log(`Fetching discs from ${DISC_FETCH_URL}...`);
-		const { status, body } = await fetch(DISC_FETCH_URL);
-		if (status !== 200) throw `Bad response status: ${status}`;
-		if (!body) throw `${DISC_FETCH_URL} returned no data!`;
+		const { ok, body, status } = await fetch(DISC_FETCH_URL);
+		if (!ok) throw `Bad response status: ${status}`;
 		const dom = new JSDOM(await Bun.readableStreamToText(body));
 		const discCollection = dom.window.document.getElementsByClassName(Site.discClass);
 		const putterCollection = dom.window.document.getElementsByClassName(Site.putterClass);

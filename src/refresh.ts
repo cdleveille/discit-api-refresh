@@ -30,6 +30,8 @@ export const refreshDiscs = async () => {
 			await doDeleteAllDiscs();
 			await doInsertDiscs(discsToInsert);
 			await doRevalidateDiscItCache();
+		} else {
+			console.log("Database is up-to-date. No further action needed.");
 		}
 		console.log("*** END *** - disc refresh process completed successfully.");
 	} catch (error) {

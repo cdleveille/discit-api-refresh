@@ -5,6 +5,7 @@ export interface IConfig {
 	API_KEY: string;
 	REFRESH_DISCS_START: boolean;
 	REFRESH_DISCS_CRON: boolean;
+	DISCIT_URL: string;
 }
 
 export interface IDisc {

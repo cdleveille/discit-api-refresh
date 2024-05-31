@@ -1,6 +1,7 @@
-import { JSDOM } from "jsdom";
+import jsdom from "jsdom";
 
-import { deleteAllDiscs, getAllDiscs, insertDiscs } from "./api";
+import { deleteAllDiscs, getAllDiscs, insertDiscs, revalidateDiscItCache } from "./api";
+import { Config } from "./config";
 import { DISC_FETCH_URL, Site } from "./constants";
 import {
 	discMeetsMinCriteria,
@@ -13,6 +14,12 @@ import {
 
 import type { IDisc, IDiscCollections } from "./types";
 
+const { JSDOM } = jsdom;
+const virtualConsole = new jsdom.VirtualConsole();
+virtualConsole.on("error", () => {
+	// No-op to skip console errors.
+});
+
 export const refreshDiscs = async () => {
 	try {
 		console.log("*** START *** - disc refresh process starting.");
@@ -22,6 +29,7 @@ export const refreshDiscs = async () => {
 		if (discsToInsert.length >= existingDiscs.length) {
 			await doDeleteAllDiscs();
 			await doInsertDiscs(discsToInsert);
+			await doRevalidateDiscItCache();
 		}
 		console.log("*** END *** - disc refresh process completed successfully.");
 	} catch (error) {
@@ -44,9 +52,9 @@ const backupDiscs = async () => {
 const getDiscs = async () => {
 	try {
 		console.log(`Fetching discs from ${DISC_FETCH_URL}...`);
-		const { ok, body, status } = await fetch(DISC_FETCH_URL);
-		if (!ok) throw `Bad response status: ${status}`;
-		const dom = new JSDOM(await Bun.readableStreamToText(body));
+		const { ok, body, status, statusText } = await fetch(DISC_FETCH_URL);
+		if (!ok) throw `Bad response status: ${status} ${statusText}`;
+		const dom = new JSDOM(await Bun.readableStreamToText(body), { virtualConsole });
 		const discCollection = dom.window.document.getElementsByClassName(Site.discClass);
 		const putterCollection = dom.window.document.getElementsByClassName(Site.putterClass);
 		console.log(`${discCollection.length + putterCollection.length} discs fetched.`);
@@ -161,7 +169,8 @@ const processDiscs = (collections: IDiscCollections) => {
 const doDeleteAllDiscs = async () => {
 	try {
 		console.log("Deleting all existing discs...");
-		await deleteAllDiscs();
+		const { ok, status, statusText } = await deleteAllDiscs();
+		if (!ok) throw `Bad response status: ${status} ${statusText}`;
 		console.log("All existing discs deleted.");
 	} catch (error) {
 		throw new Error(`${error} - Error deleting existing discs from database.`);
@@ -171,9 +180,25 @@ const doDeleteAllDiscs = async () => {
 const doInsertDiscs = async (discsToInsert: IDisc[]) => {
 	try {
 		console.log(`Inserting ${discsToInsert.length} discs...`);
-		await insertDiscs(discsToInsert);
+		const { ok, status, statusText } = await insertDiscs(discsToInsert);
+		if (!ok) throw `Bad response status: ${status} ${statusText}`;
 		console.log(`${discsToInsert.length} discs inserted.`);
 	} catch (error) {
 		throw new Error(`${error} - Error inserting discs into database.`);
+	}
+};
+
+const doRevalidateDiscItCache = async () => {
+	try {
+		if (!Config.DISCIT_URL) {
+			console.log("DISCIT_URL env var is not defined. Skipping DiscIt cache revalidation.");
+			return;
+		}
+		console.log("Revalidating DiscIt cache...");
+		const { ok, status } = await revalidateDiscItCache();
+		if (!ok) throw `Bad response status: ${status}`;
+		console.log("DiscIt cache revalidated.");
+	} catch (error) {
+		throw new Error(`${error} - Error revalidating DiscIt cache.`);
 	}
 };

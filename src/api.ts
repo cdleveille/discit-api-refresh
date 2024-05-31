@@ -18,3 +18,5 @@ export const deleteAllDiscs = () =>
 		method: "DELETE",
 		headers
 	});
+
+export const revalidateDiscItCache = () => fetch(`${Config.DISCIT_URL}/api/revalidate`, { method: "POST", headers });

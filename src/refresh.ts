@@ -157,6 +157,22 @@ const processDiscs = (collections: IDiscCollections) => {
 			if (discMeetsMinCriteria(disc)) discsToInsert.push(disc);
 		}
 
+		// check for duplicate name_slug values and append a number to the end of one of the duplicates if found
+		const nameSlugSet = new Set<string>();
+		discsToInsert.forEach((disc, i, discsToInsertRef) => {
+			let { name_slug } = disc;
+			if (nameSlugSet.has(name_slug)) {
+				console.warn(`Duplicate name_slug found: "${name_slug}"`);
+				const lastChar = name_slug.slice(-1);
+				const lastCharNum = "0123456789".includes(lastChar) ? parseInt(lastChar) : null;
+				const numToAppend = typeof lastCharNum === "number" ? lastCharNum + 1 : 2;
+				name_slug = `${name_slug.slice(0, -1)}${numToAppend}`;
+				discsToInsertRef[i].name_slug = name_slug;
+				console.warn(`Renamed to: "${name_slug}"`);
+			}
+			nameSlugSet.add(name_slug);
+		});
+
 		console.log(
 			`${discsToInsert.length}/${
 				collections.discCollection.length + collections.putterCollection.length

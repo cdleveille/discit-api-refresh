@@ -1,4 +1,11 @@
-/// <reference lib="dom" />
+import type * as shared from "discit-types";
+
+export type IDisc = shared.Disc;
+
+export interface IDiscCollections {
+	discCollection: HTMLCollectionOf<Element>;
+	putterCollection: HTMLCollectionOf<Element>;
+}
 
 export interface IConfig {
 	API_BASE_URL: string;
@@ -6,29 +13,4 @@ export interface IConfig {
 	REFRESH_DISCS_START: boolean;
 	REFRESH_DISCS_CRON: boolean;
 	DISCIT_URL: string;
-}
-
-export interface IDisc {
-	id: string;
-	name: string;
-	brand: string;
-	category: string;
-	speed: string;
-	glide: string;
-	turn: string;
-	fade: string;
-	stability: string;
-	link: string;
-	pic: string;
-	name_slug: string;
-	brand_slug: string;
-	category_slug: string;
-	stability_slug: string;
-	color: string;
-	background_color: string;
-}
-
-export interface IDiscCollections {
-	discCollection: HTMLCollectionOf<Element>;
-	putterCollection: HTMLCollectionOf<Element>;
 }

@@ -1,8 +1,7 @@
 import { Config } from "./config";
-
 import type { IDisc } from "./types";
 
-const headers = { Authorization: `Bearer ${Config.API_KEY}` };
+const headers = { Authorization: `Bearer ${Config.API_KEY}`, "Content-Type": "application/json" };
 
 export const getAllDiscs = async () => (await fetch(`${Config.API_BASE_URL}/disc`)).json() as Promise<IDisc[]>;
 
